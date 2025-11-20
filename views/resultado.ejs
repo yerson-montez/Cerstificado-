@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultado de Verificación</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <% if (certificado) { %>
+      <h2>✅ Certificado verificado correctamente</h2>
+      <p><b>Alumno:</b> <%= certificado.nombre_alumno %></p>
+      <p><b>Curso:</b> <%= certificado.curso %></p>
+      <p><b>Código:</b> <%= certificado.codigo %></p>
+      <p><b>Fecha de emisión:</b> <%= certificado.fecha_emision ? new Date(certificado.fecha_emision).toLocaleString() : "No registrada" %></p>
+
+      <% if (certificado.url_certificado) { %>
+        <iframe src="<%= certificado.url_certificado %>" width="80%" height="600"></iframe>
+      <% } else { %>
+        <p style="color:red;">⚠️ No hay PDF asociado.</p>
+      <% } %>
+
+      <br>
+      <img src="/qrs/<%= certificado.codigo %>.png" alt="QR" width="200">
+      <br><br>
+      <a href="/">🔙 Volver al inicio</a>
+
+    <% } else { %>
+      <h2 style="color:red;">❌ Certificado no encontrado</h2>
+      <p>El código ingresado no coincide con ningún certificado en la base de datos.</p>
+      <a href="/">🔙 Intentar de nuevo</a>
+    <% } %>
+  </div>
+</body>
+</html>

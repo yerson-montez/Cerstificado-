@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificación de Certificados</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Plataforma - Certificados (Subir y Verificar)</h1>
+
+    <section class="card">
+      <h2>Registrar / Subir certificado (PDF)</h2>
+      <form id="formSubir" action="/api/certificados" method="post" enctype="multipart/form-data">
+        <input type="text" name="nombre" placeholder="Nombre del alumno" required>
+        <input type="text" name="curso" placeholder="Nombre del curso" required>
+        <input type="text" name="codigo" placeholder="Código único" required>
+        <input type="file" name="archivo" accept="application/pdf" required>
+        <button type="submit">Registrar certificado</button>
+      </form>
+      <div id="resultadoApi"></div>
+    </section>
+
+    <section class="card">
+      <h2>Verificar certificado</h2>
+      <form id="formVerificar" method="get" onsubmit="this.action='/api/certificados/'+this.codigo.value">
+        <input type="text" name="codigo" placeholder="Ingrese código del certificado" required>
+        <button type="submit">Verificar</button>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    // Opcional: enviar form de registro por fetch y mostrar resultado
+    const formSubir = document.getElementById('formSubir');
+    const resultadoApi = document.getElementById('resultadoApi');
+
+    formSubir.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(formSubir);
+      const resp = await fetch('/api/certificados', { method: 'POST', body: fd });
+      const data = await resp.json();
+      if (resp.ok) {
+        resultadoApi.innerHTML = `<p style="color:green;">${data.mensaje}. Código: <b>${data.codigo}</b></p>
+          <p>QR: <img src="${data.qr}" width="120" /></p>
+          <p>Verificación: <a href="${data.url_verificacion}" target="_blank">${data.url_verificacion}</a></p>`;
+        formSubir.reset();
+      } else {
+        resultadoApi.innerHTML = `<p style="color:red;">${data.mensaje || data.error || 'Error'}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
