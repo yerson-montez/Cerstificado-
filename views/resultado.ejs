@@ -7,29 +7,62 @@
 </head>
 <body>
   <div class="container">
+
     <% if (certificado) { %>
+
       <h2>✅ Certificado verificado correctamente</h2>
       <p><b>Alumno:</b> <%= certificado.nombre_alumno %></p>
       <p><b>Curso:</b> <%= certificado.curso %></p>
       <p><b>Código:</b> <%= certificado.codigo %></p>
-      <p><b>Fecha de emisión:</b> <%= certificado.fecha_emision ? new Date(certificado.fecha_emision).toLocaleString() : "No registrada" %></p>
+      <p><b>Fecha de emisión:</b> 
+        <%= certificado.fecha_emision ? new Date(certificado.fecha_emision).toLocaleString() : "No registrada" %>
+      </p>
 
+      <!-- Mostrar PDF o Imagen -->
       <% if (certificado.url_certificado) { %>
-        <iframe src="<%= certificado.url_certificado %>" width="80%" height="600"></iframe>
+
+        <% 
+          // Detectar si la URL es PDF o imagen
+          const esPDF = certificado.url_certificado.toLowerCase().includes(".pdf");
+        %>
+
+        <% if (esPDF) { %>
+            <!-- Mostrar PDF -->
+            <iframe 
+              src="<%= certificado.url_certificado %>" 
+              width="80%" 
+              height="600"
+              style="border: 1px solid #ccc; border-radius: 10px;">
+            </iframe>
+
+        <% } else { %>
+            <!-- Mostrar IMAGEN (JPG/PNG) -->
+            <img 
+              src="<%= certificado.url_certificado %>" 
+              alt="Certificado"
+              style="max-width: 80%; border: 1px solid #ccc; border-radius: 10px;">
+        <% } %>
+
       <% } else { %>
-        <p style="color:red;">⚠️ No hay PDF asociado.</p>
+        <p style="color:red;">⚠️ No hay archivo asociado al certificado.</p>
       <% } %>
 
       <br>
+
+      <!-- QR -->
       <img src="/qrs/<%= certificado.codigo %>.png" alt="QR" width="200">
+
       <br><br>
       <a href="/">🔙 Volver al inicio</a>
 
     <% } else { %>
+
       <h2 style="color:red;">❌ Certificado no encontrado</h2>
       <p>El código ingresado no coincide con ningún certificado en la base de datos.</p>
       <a href="/">🔙 Intentar de nuevo</a>
+
     <% } %>
+
   </div>
 </body>
 </html>
